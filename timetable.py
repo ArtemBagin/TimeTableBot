@@ -57,3 +57,5 @@ class TimeTable:
 
     def day_week(self):
         return datetime.datetime.today().isoweekday()
+
+    
