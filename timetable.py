@@ -15,7 +15,7 @@ class TimeTable:
         '10.55-12.30',
         '13.00-14.35',
         '14.55-16:30',
-        '16.50-1825'
+        '16.50-18:25'
     ]
     emptiness_message = 'Выходной'
 
@@ -41,16 +41,31 @@ class TimeTable:
         if int(day) > 5:
             return self.emptiness_message
         parity_status = 'чётная' if parity % 2 == 0 else 'нечётная'
-        text = f'Расписание занятий на {self.week_names[day-1]}({parity_status} неделя):\n\n'
+        text = f'Расписание занятий на {self.week_names[day-1]} ({parity_status} неделя):\n\n'
         return text + self.get_timedata(day, parity)
 
-    def get_week_timedata(self):
-        parity = self.parity_week()
+    def get_week_timedata(self, reverse=False):
+        if reverse:
+            parity = int(not self.parity_week())
+        else:
+            parity = self.parity_week()
         parity_status = 'чётная' if parity % 2 == 0 else 'нечётная'
-        text = f'Расписание занятий на неделю({parity_status} неделя):\n\n'
+        text = f'Расписание занятий на неделю ({parity_status} неделя):\n\n'
         for day in range(1, 6):
             text += f'{self.week_names[day-1]}:\n{self.get_timedata(day, parity)}\n\n'
         return text
+
+    def get_tomorrow_timedata(self):
+        day = self.day_week()
+        parity = self.parity_week()
+        if int(day) > 5:
+            day = 1
+            parity_status = 'чётная' if parity % 2 != 0 else 'нечётная'
+        else:
+            day += 1
+            parity_status = 'чётная' if parity % 2 == 0 else 'нечётная'
+        text = f'Расписание занятий на {self.week_names[day-1]} ({parity_status} неделя):\n\n'
+        return text + self.get_timedata(day, parity)
 
     def parity_week(self):
         return int(datetime.datetime.now().strftime("%V")) % 2
